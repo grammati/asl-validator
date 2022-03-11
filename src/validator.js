@@ -36,14 +36,16 @@ function validator(definition) {
     ],
   });
 
+  // Validating JSON schemas
+  const isJsonSchemaValid = ajv.validate('http://asl-validator.cloud/state-machine.json#', definition);
+
   // Validating JSON paths
   const jsonPathErrors = checkJsonPath(definition);
 
   // Check unreachable states
-  const missingTransitionTargetErrors = missingTransitionTarget(definition);
-
-  // Validating JSON schemas
-  const isJsonSchemaValid = ajv.validate('http://asl-validator.cloud/state-machine.json#', definition);
+  const missingTransitionTargetErrors = isJsonSchemaValid
+    ? missingTransitionTarget(definition)
+    : [];
 
   return {
     isValid: isJsonSchemaValid && !jsonPathErrors.length && !missingTransitionTargetErrors.length,
